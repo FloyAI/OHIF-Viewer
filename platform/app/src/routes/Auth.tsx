@@ -1,39 +1,33 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
-function Auth() {
+function Auth({ servicesManager }) {
+  const { userAuthenticationService } = servicesManager.services;
+  const user = userAuthenticationService.getUser();
+  const [seconds, setSeconds] = React.useState(5);
+
+  // get params from /auth/:shortUrl
+  const { shortUrl } = useParams();
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(prevSeconds => prevSeconds - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (seconds <= 1) {
+    window.location.href = '/short/' + shortUrl + '?token=' + user.id_token;
+  }
+
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <div className="flex h-screen w-screen items-center justify-center ">
-        <div className="bg-secondary-dark mx-auto space-y-2 rounded-lg py-8 px-8 drop-shadow-md">
-          <img
-            className="mx-auto block h-14"
-            src="./ohif-logo.svg"
-            alt="OHIF"
-          />
-          <div className="space-y-2 pt-4 text-center">
-            <div className="flex flex-col items-center justify-center">
-              <p className="text-primary-active mt-4 text-xl font-semibold">Debug Information</p>
-              <div className="mt-4 flex items-center space-x-2">
-                <p className="text-md text-white">Cross Origin Isolated (COOP/COEP)</p>
-                {!window.crossOriginIsolated && (
-                  <div className="text-md flex-1 text-white">
-                    We use SharedArrayBuffer to render volume data (e.g., MPR). If you are seeing
-                    this message, it means that your browser has not enabled COOP/COEP. Please see
-                    the following link for more information:{' '}
-                    <a
-                      href="https://web.dev/coop-coep/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary-active"
-                    >
-                      Learn More
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="absolute flex h-full w-full items-center justify-center text-white">
+      <div className="bg-secondary-dark mx-auto space-y-2 rounded-lg py-8 px-8 drop-shadow-md">
+        <span className="mb-3 block">
+          Hello {user.profile.name} with Email {user.profile.email}
+        </span>
+        <span className="mb-3 block">Redirecting After {seconds} Seconds...</span>
       </div>
     </div>
   );

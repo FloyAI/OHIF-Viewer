@@ -185,6 +185,8 @@ function OpenIdConnectRoutes({ oidc, routerBasename, userAuthenticationService }
           <CallbackPage
             userManager={userManager}
             onRedirectSuccess={user => {
+              console.log('Redirect success', user);
+
               const { pathname, search = '' } = JSON.parse(
                 sessionStorage.getItem('ohif-redirect-to')
               );

@@ -5,13 +5,12 @@ import { Button, ErrorBoundary, Input } from '@ohif/ui';
 // Route Components
 import DataSourceWrapper from './DataSourceWrapper';
 import WorkList from './WorkList';
-import Local from './Local';
-import Debug from './Debug';
 import NotFound from './NotFound';
 import buildModeRoutes from './buildModeRoutes';
 import PrivateRoute from './PrivateRoute';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import Auth from './Auth';
 
 const NotFoundServer = ({
   message = 'Unable to query for studies at this time. Check your data source configuration or network connection',
@@ -148,6 +147,11 @@ const bakedInRoutes = [
   {
     path: '/',
     children: RootWindow,
+  },
+  {
+    path: '/auth/:shortUrl',
+    children: Auth,
+    private: true,
   },
 ];
 

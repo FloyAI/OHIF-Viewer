@@ -51,7 +51,8 @@ function App({ config, defaultExtensions, defaultModes }) {
 
   // Set appConfig
   const appConfigState = init.appConfig;
-  const { routerBasename, modes, dataSources, oidc, showStudyList } = appConfigState;
+  const { routerBasename, modes, dataSources, oidc, showStudyList, googleClientID } =
+    appConfigState;
 
   const {
     uiDialogService,
