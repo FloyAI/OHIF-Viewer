@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import CallbackPage from '../routes/CallbackPage';
 import SignoutCallbackComponent from '../routes/SignoutCallbackComponent';
 import getUserManagerForOpenIdConnectClient from './getUserManagerForOpenIdConnectClient.js';
+import Oidc from 'oidc-client';
 
 function _isAbsoluteUrl(url) {
   return url.includes('http://') || url.includes('https://');
@@ -41,6 +42,7 @@ const initUserManager = (oidc, routerBasename) => {
     redirect_uri: _makeAbsoluteIfNecessary(redirect_uri, baseUri),
     silent_redirect_uri: _makeAbsoluteIfNecessary(silent_redirect_uri, baseUri),
     post_logout_redirect_uri: _makeAbsoluteIfNecessary(post_logout_redirect_uri, baseUri),
+    userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
   });
 
   return getUserManagerForOpenIdConnectClient(openIdConnectConfiguration);
@@ -90,6 +92,25 @@ function LoginComponent(userManager) {
   return null;
 }
 
+const LogoutCallback = ({ userManager }) => {
+  const queryParams = new URLSearchParams(location.search);
+  const redirect_uri = queryParams.get('post_logout_redirect_uri');
+
+  if (redirect_uri) {
+    userManager.clearStaleState();
+    userManager
+      .removeUser()
+      .then(() => {
+        window.location.href = redirect_uri;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  return null;
+};
+
 function OpenIdConnectRoutes({ oidc, routerBasename, userAuthenticationService }) {
   const userManager = initUserManager(oidc, routerBasename);
 
@@ -134,11 +155,15 @@ function OpenIdConnectRoutes({ oidc, routerBasename, userAuthenticationService }
   }, []);
 
   useEffect(() => {
-    userAuthenticationService.set({ enabled: true });
-
-    userAuthenticationService.setServiceImplementation({
-      getAuthorizationHeader,
-      handleUnauthenticated,
+    userManager.getUser().then(user => {
+      if (user) {
+        userAuthenticationService.setUser(user);
+      }
+      userAuthenticationService.setServiceImplementation({
+        getAuthorizationHeader,
+        handleUnauthenticated,
+      });
+      userAuthenticationService.set({ enabled: true });
     });
   }, []);
 
@@ -185,6 +210,8 @@ function OpenIdConnectRoutes({ oidc, routerBasename, userAuthenticationService }
           <CallbackPage
             userManager={userManager}
             onRedirectSuccess={user => {
+              console.log('Redirect success', user);
+
               const { pathname, search = '' } = JSON.parse(
                 sessionStorage.getItem('ohif-redirect-to')
               );
@@ -207,6 +234,10 @@ function OpenIdConnectRoutes({ oidc, routerBasename, userAuthenticationService }
             oidcAuthority={oidcAuthority}
           />
         }
+      />
+      <Route
+        path="/logout/callback"
+        element={<LogoutCallback userManager={userManager} />}
       />
       <Route
         path="/logout"

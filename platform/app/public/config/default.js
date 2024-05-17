@@ -1,6 +1,31 @@
 window.config = {
   routerBasename: '/',
   // whiteLabeling: {},
+  // This is an array, but we'll only use the first entry for now
+  oidc: [
+    {
+      // ~ REQUIRED
+      // Authorization Server URL
+      authority: 'https://accounts.google.com',
+      client_id: '544512997564-coih5b010f9ln9d8jalvs4pctb08q76a.apps.googleusercontent.com',
+      redirect_uri: '/callback',
+      response_type: 'id_token token',
+      scope: 'email profile', // email profile openid
+      // ~ OPTIONAL
+      post_logout_redirect_uri: '/logout-redirect.html',
+      revoke_uri: 'https://accounts.google.com/o/oauth2/revoke?token=',
+      automaticSilentRenew: true,
+      revokeAccessTokenOnSignout: true,
+      metadata: {
+        issuer: 'accounts.google.com',
+        authorization_endpoint: 'https://accounts.google.com/o/oauth2/auth',
+        token_endpoint: 'https://accounts.google.com/o/oauth2/token',
+        userinfo_endpoint: 'https://www.googleapis.com/oauth2/v3/userinfo',
+        end_session_endpoint: '/logout/callback',
+        jwks_uri: 'https://www.googleapis.com/oauth2/v3/certs',
+      },
+    },
+  ],
   extensions: [],
   modes: [],
   customizationService: {},
