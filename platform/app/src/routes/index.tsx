@@ -149,6 +149,10 @@ const bakedInRoutes = [
     children: RootWindow,
   },
   {
+    path: '/auth',
+    children: RootWindow,
+  },
+  {
     path: '/auth/:shortUrl',
     children: Auth,
     private: true,
