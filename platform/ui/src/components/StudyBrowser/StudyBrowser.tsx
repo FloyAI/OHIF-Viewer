@@ -44,8 +44,8 @@ const StudyBrowser = ({
             <StudyItem
               date={date}
               description={description}
-              numInstances={numInstances}
-              modalities={modalities}
+              numInstances={numInstances || displaySets?.[0]?.numInstances || 0}
+              modalities={modalities || displaySets?.[0]?.modality || ''}
               trackedSeries={getTrackedSeries(displaySets)}
               isActive={isExpanded}
               onClick={() => {
