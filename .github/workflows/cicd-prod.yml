@@ -66,8 +66,8 @@ jobs:
       - name: Get Production S3 bucket and CloudFront distribution from Parameter Store
         id: aws-params
         run: |
-          S3_BUCKET=$(aws ssm get-parameter --name "/ohif-viewer-frontend-prod/bucket/id" --query "Parameter.Value" --output text 2>/dev/null || echo "")
-          CLOUDFRONT_DIST=$(aws ssm get-parameter --name "/ohif-viewer-frontend-prod/cdn/id" --query "Parameter.Value" --output text 2>/dev/null || echo "")
+          S3_BUCKET=$(aws ssm get-parameter --name "/ohif-viewer-frontend/bucket/id" --query "Parameter.Value" --output text 2>/dev/null || echo "")
+          CLOUDFRONT_DIST=$(aws ssm get-parameter --name "/ohif-viewer-frontend/cdn/id" --query "Parameter.Value" --output text 2>/dev/null || echo "")
           echo "s3-bucket=$S3_BUCKET" >> $GITHUB_OUTPUT
           echo "cloudfront-distribution=$CLOUDFRONT_DIST" >> $GITHUB_OUTPUT
       
