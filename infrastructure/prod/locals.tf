@@ -7,7 +7,7 @@ locals {
   environment                        = "prod"
   region                             = "eu-west-1"
   acm_floy_certificate_arn_us_east_1 = data.terraform_remote_state.security.outputs.acm_floy_certificate_arn_us_east_1
-  domain                             = "view-temp.floy.com"
+  domain                             = "view.floy.com"
   zone_id                            = data.terraform_remote_state.network.outputs.route53_floy_zone_id
   tags                               = module.labels.tags
 }
